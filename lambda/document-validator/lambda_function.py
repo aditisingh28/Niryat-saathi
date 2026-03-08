@@ -69,66 +69,97 @@ def extract_s3_key(url):
 
 def extract_document_data(s3_key):
     """
-    Extract text and key-value pairs from document using Textract
+    Extract text and key-value pairs from document
+    For text files: read directly from S3
+    For images/PDFs: would use Textract (requires subscription)
     """
     try:
-        response = textract.analyze_document(
-            Document={
-                'S3Object': {
-                    'Bucket': S3_BUCKET,
-                    'Name': s3_key
+        # Check file extension
+        file_ext = s3_key.split('.')[-1].lower()
+        
+        if file_ext in ['txt', 'text']:
+            # Read text file directly from S3
+            print(f"Reading text file from S3: {s3_key}")
+            response = s3.get_object(Bucket=S3_BUCKET, Key=s3_key)
+            full_text = response['Body'].read().decode('utf-8')
+            
+        elif file_ext in ['pdf', 'jpg', 'jpeg', 'png']:
+            # Try Textract for images/PDFs
+            print(f"Attempting Textract for {file_ext} file")
+            try:
+                response = textract.analyze_document(
+                    Document={
+                        'S3Object': {
+                            'Bucket': S3_BUCKET,
+                            'Name': s3_key
+                        }
+                    },
+                    FeatureTypes=['FORMS', 'TABLES']
+                )
+                
+                # Extract text from blocks
+                blocks = response.get('Blocks', [])
+                text_content = []
+                for block in blocks:
+                    if block['BlockType'] == 'LINE':
+                        text_content.append(block['Text'])
+                
+                full_text = '\n'.join(text_content)
+                
+            except Exception as textract_error:
+                print(f"Textract not available: {textract_error}")
+                return {
+                    'error': 'Textract requires subscription. Please use text files for testing.',
+                    'note': 'For production, enable Textract in your AWS account'
                 }
-            },
-            FeatureTypes=['FORMS', 'TABLES']
-        )
-        
-        # Extract key-value pairs
-        extracted_data = {}
-        blocks = response.get('Blocks', [])
-        
-        # Simple extraction - look for common fields
-        text_content = []
-        for block in blocks:
-            if block['BlockType'] == 'LINE':
-                text_content.append(block['Text'])
-        
-        full_text = '\n'.join(text_content)
+        else:
+            return {
+                'error': f'Unsupported file type: {file_ext}',
+                'supported_types': 'txt (no subscription), pdf/jpg/png (requires Textract subscription)'
+            }
         
         # Extract common fields using pattern matching
         extracted_data = {
             'full_text': full_text,
-            'exporter_name': extract_field(full_text, ['exporter', 'seller', 'from']),
-            'iec_number': extract_field(full_text, ['iec', 'iec no', 'iec number']),
-            'hsn_code': extract_field(full_text, ['hsn', 'hsn code', 'hs code']),
-            'invoice_number': extract_field(full_text, ['invoice', 'invoice no', 'invoice number']),
-            'invoice_date': extract_field(full_text, ['date', 'invoice date']),
-            'invoice_value': extract_field(full_text, ['value', 'amount', 'total']),
-            'destination_country': extract_field(full_text, ['destination', 'country', 'to']),
-            'product_description': extract_field(full_text, ['description', 'product', 'goods'])
+            'exporter_name': extract_field(full_text, ['exporter:', 'exporter name:', 'seller:']),
+            'iec_number': extract_field(full_text, ['iec number:', 'iec no:', 'iec:']),
+            'hsn_code': extract_field(full_text, ['hsn code:', 'hsn:', 'hs code:']),
+            'invoice_number': extract_field(full_text, ['invoice number:', 'invoice no:', 'inv no:']),
+            'invoice_date': extract_field(full_text, ['invoice date:', 'date:', 'inv date:']),
+            'invoice_value': extract_field(full_text, ['total value:', 'total:', 'amount:', 'invoice value:']),
+            'destination_country': extract_field(full_text, ['destination country:', 'destination:', 'country:', 'to country:']),
+            'product_description': extract_field(full_text, ['product description:', 'description:', 'product:', 'goods:'])
         }
         
         return extracted_data
         
     except Exception as e:
-        print(f"Textract error: {e}")
+        print(f"Extraction error: {e}")
         return None
 
 
 def extract_field(text, keywords):
     """
     Extract field value from text based on keywords
+    Improved to handle multiple keyword matches and better parsing
     """
     lines = text.split('\n')
     for i, line in enumerate(lines):
         line_lower = line.lower()
         for keyword in keywords:
+            # Check if keyword is in the line
             if keyword in line_lower:
-                # Try to get the value from the same line or next line
-                parts = line.split(':')
-                if len(parts) > 1:
-                    return parts[1].strip()
+                # Try to get the value from the same line after colon
+                if ':' in line:
+                    parts = line.split(':', 1)  # Split only on first colon
+                    value = parts[1].strip()
+                    if value:  # Only return if value is not empty
+                        return value
+                # If no colon or empty value, try next line
                 elif i + 1 < len(lines):
-                    return lines[i + 1].strip()
+                    next_line = lines[i + 1].strip()
+                    if next_line and not ':' in next_line:  # Avoid getting another label
+                        return next_line
     return None
 
 
@@ -142,21 +173,44 @@ Document Type: {document_type}
 Extracted Fields:
 {json.dumps(extracted_data, indent=2)}
 
-Validate this document and identify any errors or warnings:
-1. Check if IEC number format is valid (10 digits)
-2. Check if HSN code format is valid (8 digits)
-3. Check if invoice value is present and valid
-4. Check if date is valid and not in future
-5. Check if destination country is specified
-6. Check for any missing required fields
-7. Check for any inconsistencies
+Validate this document and identify ONLY PROBLEMS, ERRORS, or WARNINGS.
 
-Return validation results as JSON with:
-- status: "valid", "warning", or "error"
-- issues: array of issues found
-- recommendations: array of recommendations
+Check for:
+1. IEC number format (must be exactly 10 digits) - flag if INVALID
+2. HSN code format (must be exactly 8 digits) - flag if INVALID
+3. Invoice value - flag if MISSING or INVALID
+4. Invoice date - flag if MISSING, INVALID, or IN FUTURE
+5. Destination country - flag if MISSING
+6. Missing required fields - flag if ANY ARE MISSING
+7. Inconsistencies - flag if ANY FOUND
 
-Format as JSON."""
+IMPORTANT RULES:
+- Only include items in "issues" array if there is an ACTUAL PROBLEM
+- Do NOT include confirmations that fields are valid
+- Empty "issues" array means document is valid
+- Use "recommendations" for suggestions to improve the document
+
+COUNTRY FORMAT RULES (ALL ACCEPTABLE):
+- "INDIA" (all caps)
+- "India" (title case)
+- "INDIA (IN)" (with ISO code)
+- "India - IN" (with ISO code)
+- Any country name in these formats is VALID
+
+Return validation results as JSON:
+{{
+  "status": "valid" | "warning" | "error",
+  "issues": [
+    {{
+      "field": "field_name",
+      "issue": "what is wrong",
+      "severity": "error" | "warning"
+    }}
+  ],
+  "recommendations": ["suggestion 1", "suggestion 2"]
+}}
+
+Return ONLY the JSON, no other text."""
 
     try:
         response = bedrock.invoke_model(

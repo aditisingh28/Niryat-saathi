@@ -40,9 +40,9 @@ function DocumentValidator() {
 
   const handleFile = (selectedFile) => {
     // Validate file type
-    const validTypes = ['image/jpeg', 'image/png', 'application/pdf'];
+    const validTypes = ['image/jpeg', 'image/png', 'application/pdf', 'text/plain'];
     if (!validTypes.includes(selectedFile.type)) {
-      setError('Please upload a PDF, JPEG, or PNG file');
+      setError('Please upload a PDF, JPEG, PNG, or TXT file');
       return;
     }
     
@@ -145,11 +145,11 @@ function DocumentValidator() {
                 <input
                   id="file-upload"
                   type="file"
-                  accept=".pdf,.jpg,.jpeg,.png"
+                  accept=".pdf,.jpg,.jpeg,.png,.txt"
                   onChange={handleFileChange}
                   style={{ display: 'none' }}
                 />
-                <p className="upload-hint">Supported: PDF, JPEG, PNG (Max 10MB)</p>
+                <p className="upload-hint">Supported: PDF, JPEG, PNG, TXT (Max 10MB)</p>
               </>
             ) : (
               <div className="file-preview">
@@ -239,7 +239,16 @@ function DocumentValidator() {
                 {results.validation_results.issues.map((issue, index) => (
                   <div key={index} className="issue-item">
                     <span className="issue-icon">⚠</span>
-                    {issue}
+                    <div>
+                      {typeof issue === 'string' ? (
+                        issue
+                      ) : (
+                        <>
+                          <strong>{issue.field || 'General'}:</strong> {issue.issue || issue.message || JSON.stringify(issue)}
+                          {issue.description && <p style={{marginTop: '5px', fontSize: '0.9em', color: '#666'}}>{issue.description}</p>}
+                        </>
+                      )}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -251,7 +260,9 @@ function DocumentValidator() {
                 {results.validation_results.recommendations.map((rec, index) => (
                   <div key={index} className="recommendation-item">
                     <span className="rec-icon">💡</span>
-                    {rec}
+                    <div>
+                      {typeof rec === 'string' ? rec : JSON.stringify(rec)}
+                    </div>
                   </div>
                 ))}
               </div>
@@ -287,6 +298,20 @@ function DocumentValidator() {
             <h4>Fast Processing</h4>
             <p>Results in under 15 seconds</p>
           </div>
+        </div>
+        
+        <div className="info-note" style={{
+          marginTop: '20px',
+          padding: '15px',
+          backgroundColor: '#fff3cd',
+          borderLeft: '4px solid #ffc107',
+          borderRadius: '4px'
+        }}>
+          <strong>💡 Testing Tip:</strong> Use text files (.txt) for testing! 
+          Amazon Textract (for PDF/image processing) requires a subscription. 
+          Text files work perfectly and demonstrate all validation features.
+          <br/>
+          <small>Sample files available in the test-data folder.</small>
         </div>
       </div>
     </div>

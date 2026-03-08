@@ -1,0 +1,19 @@
+COMMERCIAL INVOICE
+
+Exporter: Test Company Ltd
+IEC Number: 123
+Address: Mumbai, India
+
+Invoice Date: 2025-12-31
+HSN Code: 1234
+
+Product Description: Cotton Fabric
+Quantity: 500 units
+Unit Price: USD 10.00
+Total Value: -5000.00
+
+Destination Country: USA
+Buyer: Import Co
+
+Payment Terms: Cash
+Shipping Terms: FOB

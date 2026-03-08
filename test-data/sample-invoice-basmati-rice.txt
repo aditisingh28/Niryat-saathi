@@ -1,0 +1,33 @@
+COMMERCIAL INVOICE
+
+Exporter: Premium Rice Exports India Pvt Ltd
+IEC Number: 9876543210
+Address: Rice Mill Road, Karnal, Haryana 132001, India
+
+Invoice Number: INV-RICE-2024-050
+Invoice Date: 2024-03-08
+HSN Code: 10063020
+
+Product Description: Basmati Rice (Premium Quality, 1121 Variety)
+Quantity: 10,000 kg (10 MT)
+Unit Price: USD 2.50 per kg
+Total Value: USD 25,000.00
+
+Destination Country: United Arab Emirates
+Buyer: Dubai Food Trading LLC
+Buyer Address: Al Quoz Industrial Area, Dubai, UAE
+
+Payment Terms: 60 days LC
+Shipping Terms: CIF Dubai
+Port of Loading: Mundra Port, Gujarat
+Port of Discharge: Jebel Ali Port, Dubai
+
+Special Notes:
+- Fumigation Certificate Attached
+- Phytosanitary Certificate Attached
+- Certificate of Origin Attached
+
+Authorized Signatory
+Premium Rice Exports India Pvt Ltd
+Managing Director
+Date: March 8, 2024

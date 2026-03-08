@@ -106,3 +106,72 @@ Built with ❤️ for Indian MSME Exporters
 ---
 
 ⚠️ **Disclaimer**: This is AI-assisted decision support, not legal advice. Always verify HSN codes with customs brokers for critical export decisions.
+
+
+## Testing
+
+### HSN Classifier Tests
+```bash
+# Quick test (5 products)
+./scripts/quick-test.sh
+
+# Comprehensive test (10 products)
+./scripts/test-10-products.sh
+
+# Full test suite (20 products)
+./scripts/test-all-products.sh
+```
+
+### Document Validator Tests
+
+**Important**: Amazon Textract requires a subscription to process images and PDFs. For testing without Textract, use the provided text files.
+
+#### Using Sample Text Files (No Subscription Needed)
+
+We've provided sample invoice files in `test-data/` that you can use:
+
+1. **sample-invoice-good.txt** - Valid invoice (should pass)
+2. **sample-invoice-errors.txt** - Invoice with errors (should fail)
+3. **sample-invoice-basmati-rice.txt** - Realistic export scenario
+
+**How to test:**
+1. Go to http://localhost:3000
+2. Click "Document Validator"
+3. Upload one of the sample .txt files from `test-data/`
+4. Click "Validate Document"
+5. See AI validation results!
+
+See `test-data/README.md` for detailed instructions.
+
+#### Command Line Testing
+```bash
+# Test document validation API
+./scripts/test-document-validation.sh
+
+# Test complete upload flow
+./scripts/test-validation-only.sh
+
+# Test frontend flow simulation
+./scripts/test-frontend-upload.sh
+```
+
+### Enabling Textract (Optional)
+
+To process actual images and PDFs:
+1. Go to AWS Console → Textract
+2. Enable the service (free tier: 1,000 pages/month)
+3. No code changes needed - it will work automatically
+
+See `TESTING-WITHOUT-TEXTRACT.md` for more details.
+
+## Documentation
+
+- `README.md` - This file
+- `TESTING-WITHOUT-TEXTRACT.md` - Guide for testing without Textract subscription
+- `test-data/README.md` - Sample invoice files and usage
+- `TEST-RESULTS.md` - HSN classifier test results
+- `DOCUMENT-VALIDATION-TEST-RESULTS.md` - Document validator test results
+- `CORS-FIX.md` - CORS configuration fixes
+- `S3-CORS-FIX.md` - S3 bucket CORS setup
+- `FINAL-STATUS.md` - Complete project status
+- `PROJECT-SUMMARY.md` - Project overview
