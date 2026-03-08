@@ -226,3 +226,151 @@
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Recommendation Banner */
+.recommendation-banner {
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: white;
+  padding: 30px;
+  border-radius: 12px;
+  margin-bottom: 30px;
+  text-align: center;
+  box-shadow: 0 8px 16px rgba(102, 126, 234, 0.3);
+}
+
+.recommended-badge {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 8px 16px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  margin-bottom: 15px;
+}
+
+.recommended-code {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 15px 0;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.recommended-confidence {
+  font-size: 1.3rem;
+  font-weight: 600;
+  margin-bottom: 15px;
+  opacity: 0.95;
+}
+
+.recommended-text {
+  font-size: 1rem;
+  opacity: 0.9;
+  margin: 0;
+}
+
+/* Enhanced HSN Cards */
+.hsn-card.best-match {
+  border: 3px solid #667eea;
+  background: linear-gradient(to bottom, #f0f4ff 0%, #f7fafc 100%);
+}
+
+.hsn-rank {
+  background: #667eea;
+  color: white;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+}
+
+.hsn-header {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 15px;
+}
+
+/* Confidence Bar */
+.confidence-bar {
+  width: 100%;
+  height: 8px;
+  background: #e2e8f0;
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 15px;
+}
+
+.confidence-fill {
+  height: 100%;
+  transition: width 0.5s ease;
+  border-radius: 4px;
+}
+
+.confidence-fill.confidence-high {
+  background: linear-gradient(90deg, #48bb78 0%, #38a169 100%);
+}
+
+.confidence-fill.confidence-medium {
+  background: linear-gradient(90deg, #ecc94b 0%, #d69e2e 100%);
+}
+
+.confidence-fill.confidence-low {
+  background: linear-gradient(90deg, #fc8181 0%, #f56565 100%);
+}
+
+/* Use This Code Banner */
+.use-this-code {
+  background: #c6f6d5;
+  color: #22543d;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  text-align: center;
+  border: 2px solid #9ae6b4;
+}
+
+/* Disclaimer */
+.disclaimer {
+  background: #fef3c7;
+  border-left: 4px solid #f59e0b;
+  padding: 20px;
+  border-radius: 8px;
+  margin-top: 30px;
+  color: #92400e;
+  line-height: 1.6;
+}
+
+.model-info {
+  color: #718096;
+  font-size: 0.9rem;
+  margin-bottom: 20px;
+  font-style: italic;
+}
+
+.results h4 {
+  color: #2d3748;
+  margin: 30px 0 20px 0;
+  font-size: 1.2rem;
+}
+
+.no-results {
+  text-align: center;
+  padding: 40px;
+  color: #718096;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .recommended-code {
+    font-size: 2rem;
+  }
+  
+  .hsn-header {
+    flex-wrap: wrap;
+  }
+}

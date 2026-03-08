@@ -3,7 +3,7 @@ import axios from 'axios';
 import './HSNClassifier.css';
 
 // Replace with your API Gateway URL after deployment
-const API_URL = process.env.REACT_APP_API_URL || 'https://your-api-id.execute-api.ap-south-1.amazonaws.com/prod';
+const API_URL = process.env.REACT_APP_API_URL || 'https://33m1wci2fb.execute-api.ap-south-1.amazonaws.com/prod';
 
 function HSNClassifier() {
   const [productDescription, setProductDescription] = useState('');
@@ -31,6 +31,7 @@ function HSNClassifier() {
         user_id: 'web_user'
       });
 
+      console.log('API Response:', response.data);
       setResults(response.data);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to classify product. Please try again.');
@@ -91,39 +92,69 @@ function HSNClassifier() {
 
         {results && (
           <div className="results">
-            <h3>HSN Code Suggestions</h3>
-            <p className="processing-time">
-              Processing time: {results.processing_time_ms}ms
-            </p>
+            <h3>HSN Code Recommendations</h3>
+            {results.model_used && (
+              <p className="model-info">Powered by: {results.model_used}</p>
+            )}
 
-            {results.hsn_codes.map((hsn, index) => (
-              <div key={index} className="hsn-card">
-                <div className="hsn-header">
-                  <div className="hsn-code">{hsn.code}</div>
-                  <div className={`confidence confidence-${getConfidenceColor(hsn.confidence)}`}>
-                    {(hsn.confidence * 100).toFixed(0)}% confidence
+            {results.classifications && Array.isArray(results.classifications) && results.classifications.length > 0 ? (
+              <>
+                <div className="recommendation-banner">
+                  <div className="recommended-badge">✓ RECOMMENDED</div>
+                  <div className="recommended-code">{results.classifications[0].hsn_code}</div>
+                  <div className="recommended-confidence">
+                    {(results.classifications[0].confidence * 100).toFixed(0)}% Match
                   </div>
+                  <p className="recommended-text">
+                    Based on AI analysis, this is the most suitable HSN code for your product.
+                  </p>
                 </div>
 
-                <div className="hsn-description">{hsn.description}</div>
-                
-                <div className="hsn-explanation">
-                  <strong>Why this code:</strong> {hsn.explanation}
+                <h4>All Suggestions (Ranked by Confidence)</h4>
+                {results.classifications.map((hsn, index) => (
+                  <div key={index} className={`hsn-card ${index === 0 ? 'best-match' : ''}`}>
+                    <div className="hsn-header">
+                      <div className="hsn-rank">#{index + 1}</div>
+                      <div className="hsn-code">{hsn.hsn_code}</div>
+                      <div className={`confidence confidence-${getConfidenceColor(hsn.confidence)}`}>
+                        {(hsn.confidence * 100).toFixed(0)}% confidence
+                      </div>
+                    </div>
+                    
+                    <div className="confidence-bar">
+                      <div 
+                        className={`confidence-fill confidence-${getConfidenceColor(hsn.confidence)}`}
+                        style={{ width: `${hsn.confidence * 100}%` }}
+                      ></div>
+                    </div>
+                    
+                    <div className="hsn-explanation">
+                      <strong>Why this code:</strong> {hsn.explanation}
+                    </div>
+
+                    {index === 0 && (
+                      <div className="use-this-code">
+                        <strong>✓ Use this HSN code for your export documentation</strong>
+                      </div>
+                    )}
+                  </div>
+                ))}
+
+                <div className="disclaimer">
+                  <strong>⚠️ Important:</strong> While our AI provides highly accurate suggestions, 
+                  we recommend verifying the HSN code with a customs broker or the official 
+                  Indian Customs tariff before finalizing your export documentation.
                 </div>
-
-                {hsn.restrictions && hsn.restrictions !== 'None' && (
-                  <div className="hsn-restrictions">
-                    <strong>⚠️ Restrictions:</strong> {hsn.restrictions}
-                  </div>
-                )}
-
-                {hsn.warning && (
-                  <div className="hsn-warning">
-                    ⚠️ {hsn.warning}
-                  </div>
-                )}
+              </>
+            ) : (
+              <div className="no-results">
+                <p>No classifications found. Please try again.</p>
+                <details>
+                  <summary>Debug Info (click to expand)</summary>
+                  <pre style={{textAlign: 'left', fontSize: '0.8rem'}}>{JSON.stringify(results, null, 2)}</pre>
+                </details>
               </div>
-            ))}
+            )}
           </div>
         )}
       </div>
