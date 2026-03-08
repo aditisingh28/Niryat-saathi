@@ -180,22 +180,55 @@ Check for:
 2. HSN code format (must be exactly 8 digits) - flag if INVALID
 3. Invoice value - flag if MISSING or INVALID
 4. Invoice date - flag if MISSING, INVALID, or IN FUTURE
-5. Destination country - flag if MISSING
+5. Destination country - flag ONLY if field is COMPLETELY MISSING or EMPTY (ignore spelling/format)
 6. Missing required fields - flag if ANY ARE MISSING
 7. Inconsistencies - flag if ANY FOUND
 
-IMPORTANT RULES:
+DO NOT FLAG:
+- Country name spelling (United State = valid, United States = valid)
+- Country name format (any format is acceptable)
+- Country name case (upper, lower, title case all acceptable)
+- Country name variations (USA, US, United States all acceptable)
+- Any country name that is present in any form
+
+CRITICAL RULES:
 - Only include items in "issues" array if there is an ACTUAL PROBLEM
 - Do NOT include confirmations that fields are valid
 - Empty "issues" array means document is valid
-- Use "recommendations" for suggestions to improve the document
+- ALWAYS provide "recommendations" array with helpful suggestions to improve the document
 
-COUNTRY FORMAT RULES (ALL ACCEPTABLE):
-- "INDIA" (all caps)
-- "India" (title case)
-- "INDIA (IN)" (with ISO code)
-- "India - IN" (with ISO code)
-- Any country name in these formats is VALID
+RECOMMENDATIONS (ALWAYS PROVIDE 2-3):
+- Suggest adding missing optional fields (buyer address, payment terms, shipping details)
+- Recommend including additional documentation (packing list, certificate of origin)
+- Suggest improvements to formatting or clarity
+- Provide export compliance tips
+- Recommend verification steps
+
+COUNTRY NAME VALIDATION:
+- ANY country name in ANY format is COMPLETELY ACCEPTABLE and VALID
+- DO NOT FLAG country names for ANY reason (spelling, format, case, etc.)
+- "United States", "United State", "USA", "US", "UNITED STATES" - ALL PERFECTLY VALID
+- "India", "INDIA", "India (IN)", "INDIA - IN" - ALL PERFECTLY VALID
+- "United Kingdom", "UK", "Britain", "Great Britain" - ALL PERFECTLY VALID
+- Title case, UPPER CASE, lower case - ALL PERFECTLY ACCEPTABLE
+- With or without ISO codes - BOTH PERFECTLY ACCEPTABLE
+- Minor spelling variations - PERFECTLY ACCEPTABLE (NEVER flag)
+- Typos or misspellings - PERFECTLY ACCEPTABLE (NEVER flag)
+- DO NOT EVER flag country name issues of any kind
+- ONLY flag if country field is completely MISSING or empty
+- NEVER EVER flag "United State" vs "United States" - both are perfectly acceptable
+- NEVER mention country name in issues or warnings
+
+EXAMPLES OF VALID COUNTRY NAMES (NEVER FLAG ANY OF THESE):
+- "United State" ✓ PERFECTLY VALID - DO NOT FLAG
+- "United States" ✓ PERFECTLY VALID
+- "USA" ✓ PERFECTLY VALID
+- "India" ✓ PERFECTLY VALID
+- "INDIA" ✓ PERFECTLY VALID
+- "UK" ✓ PERFECTLY VALID
+- "United Kingdom" ✓ PERFECTLY VALID
+
+IF COUNTRY NAME IS PRESENT IN ANY FORM: DO NOT FLAG IT, DO NOT MENTION IT, TREAT IT AS VALID.
 
 Return validation results as JSON:
 {{
@@ -207,9 +240,14 @@ Return validation results as JSON:
       "severity": "error" | "warning"
     }}
   ],
-  "recommendations": ["suggestion 1", "suggestion 2"]
+  "recommendations": [
+    "Add buyer's complete address for customs clearance",
+    "Include payment terms (e.g., 30 days net)",
+    "Consider adding certificate of origin"
+  ]
 }}
 
+IMPORTANT: Always include 2-3 recommendations even if document is valid.
 Return ONLY the JSON, no other text."""
 
     try:
