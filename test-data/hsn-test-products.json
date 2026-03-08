@@ -1,0 +1,142 @@
+[
+  {
+    "id": 1,
+    "product_description": "Handmade turmeric soap",
+    "product_description_hi": "हाथ से बना हल्दी साबुन",
+    "expected_hsn": "34011190",
+    "category": "Cosmetics"
+  },
+  {
+    "id": 2,
+    "product_description": "Cotton bedsheets",
+    "product_description_hi": "कपास की चादरें",
+    "expected_hsn": "63022100",
+    "category": "Textiles"
+  },
+  {
+    "id": 3,
+    "product_description": "Frozen mango pulp",
+    "product_description_hi": "जमे हुए आम का गूदा",
+    "expected_hsn": "08119090",
+    "category": "Food"
+  },
+  {
+    "id": 4,
+    "product_description": "Basmati rice",
+    "product_description_hi": "बासमती चावल",
+    "expected_hsn": "10063020",
+    "category": "Food"
+  },
+  {
+    "id": 5,
+    "product_description": "Wooden toys",
+    "product_description_hi": "लकड़ी के खिलौने",
+    "expected_hsn": "95030070",
+    "category": "Toys"
+  },
+  {
+    "id": 6,
+    "product_description": "Leather jackets",
+    "product_description_hi": "चमड़े की जैकेट",
+    "expected_hsn": "42033000",
+    "category": "Apparel"
+  },
+  {
+    "id": 7,
+    "product_description": "Brass handicrafts",
+    "product_description_hi": "पीतल की हस्तशिल्प",
+    "expected_hsn": "83062900",
+    "category": "Handicrafts"
+  },
+  {
+    "id": 8,
+    "product_description": "Cashew nuts",
+    "product_description_hi": "काजू",
+    "expected_hsn": "08013200",
+    "category": "Food"
+  },
+  {
+    "id": 9,
+    "product_description": "Black pepper",
+    "product_description_hi": "काली मिर्च",
+    "expected_hsn": "09041110",
+    "category": "Spices"
+  },
+  {
+    "id": 10,
+    "product_description": "CTC tea",
+    "product_description_hi": "सीटीसी चाय",
+    "expected_hsn": "09023010",
+    "category": "Beverages"
+  },
+  {
+    "id": 11,
+    "product_description": "Handloom sarees",
+    "product_description_hi": "हथकरघा साड़ियाँ",
+    "expected_hsn": "52084200",
+    "category": "Textiles"
+  },
+  {
+    "id": 12,
+    "product_description": "Jute bags",
+    "product_description_hi": "जूट के बैग",
+    "expected_hsn": "42022210",
+    "category": "Bags"
+  },
+  {
+    "id": 13,
+    "product_description": "Ayurvedic medicines",
+    "product_description_hi": "आयुर्वेदिक दवाएं",
+    "expected_hsn": "30049011",
+    "category": "Pharmaceuticals"
+  },
+  {
+    "id": 14,
+    "product_description": "Banana chips",
+    "product_description_hi": "केले के चिप्स",
+    "expected_hsn": "20081990",
+    "category": "Food"
+  },
+  {
+    "id": 15,
+    "product_description": "Ceramic tiles",
+    "product_description_hi": "सिरेमिक टाइलें",
+    "expected_hsn": "69089010",
+    "category": "Building Materials"
+  },
+  {
+    "id": 16,
+    "product_description": "Steel utensils",
+    "product_description_hi": "स्टील के बर्तन",
+    "expected_hsn": "73239390",
+    "category": "Kitchenware"
+  },
+  {
+    "id": 17,
+    "product_description": "Incense sticks",
+    "product_description_hi": "अगरबत्ती",
+    "expected_hsn": "33074100",
+    "category": "Fragrances"
+  },
+  {
+    "id": 18,
+    "product_description": "Honey",
+    "product_description_hi": "शहद",
+    "expected_hsn": "04090000",
+    "category": "Food"
+  },
+  {
+    "id": 19,
+    "product_description": "Coconut oil",
+    "product_description_hi": "नारियल का तेल",
+    "expected_hsn": "15131100",
+    "category": "Oils"
+  },
+  {
+    "id": 20,
+    "product_description": "Cotton yarn",
+    "product_description_hi": "कपास का धागा",
+    "expected_hsn": "52051100",
+    "category": "Textiles"
+  }
+]
