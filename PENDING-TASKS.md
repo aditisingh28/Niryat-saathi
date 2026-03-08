@@ -20,11 +20,12 @@
 - [ ] Fix any UI bugs found
 
 ### 2. Document Validator Feature
-- [ ] Create DocumentValidator Lambda function
-- [ ] Integrate Amazon Textract for OCR
+- [x] Create DocumentValidator Lambda function
+- [x] Integrate Amazon Textract for OCR
 - [ ] Create document upload UI component
 - [ ] Add validation logic for export documents
 - [ ] Display validation results with errors/warnings
+- [ ] Test with sample invoices
 
 ### 3. Multilingual Support
 - [ ] Add Amazon Translate integration
