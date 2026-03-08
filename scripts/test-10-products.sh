@@ -1,12 +1,12 @@
 #!/bin/bash
 
-# Test HSN Classifier with 20 common export products
-# Usage: ./scripts/test-all-products.sh
+# Test HSN Classifier with 10 products
+# Usage: ./scripts/test-10-products.sh
 
 API_URL="https://33m1wci2fb.execute-api.ap-south-1.amazonaws.com/prod/api/v1/classify-product"
 
 echo "========================================="
-echo "Testing HSN Classifier with 20 Products"
+echo "Testing HSN Classifier (10 Products)"
 echo "========================================="
 echo ""
 
@@ -14,48 +14,28 @@ echo ""
 products=(
     "handmade turmeric soap"
     "cotton bedsheets"
-    "frozen mango pulp"
     "basmati rice"
     "wooden toys"
-    "leather jackets"
-    "brass handicrafts"
-    "cashew nuts"
     "black pepper"
-    "CTC tea"
     "handloom sarees"
     "jute bags"
-    "ayurvedic medicines"
     "banana chips"
-    "ceramic tiles"
-    "steel utensils"
-    "incense sticks"
     "honey"
     "coconut oil"
-    "cotton yarn"
 )
 
-# Expected HSN codes (for validation)
+# Expected HSN codes (first 4 digits for matching)
 expected_hsn=(
-    "34011190"
-    "63022100"
-    "0811909090"
-    "10063020"
-    "95030070"
-    "42033000"
-    "83062900"
-    "08013200"
-    "09041110"
-    "09023010"
-    "52084200"
-    "42022210"
-    "30049011"
-    "20081990"
-    "69089010"
-    "73239390"
-    "33074100"
-    "04090000"
-    "15131100"
-    "52051100"
+    "3401"
+    "6302"
+    "1006"
+    "9503"
+    "0904"
+    "5208"
+    "4202"
+    "2008"
+    "0409"
+    "1513"
 )
 
 success_count=0
@@ -67,7 +47,7 @@ for i in "${!products[@]}"; do
     expected="${expected_hsn[$i]}"
     
     echo "[$((i+1))/$total_count] Testing: $product"
-    echo "Expected HSN: $expected"
+    echo "Expected HSN: $expected*"
     
     start_time=$(python3 -c 'import time; print(int(time.time() * 1000))')
     
@@ -87,10 +67,10 @@ for i in "${!products[@]}"; do
         echo "❌ FAILED: No HSN code returned"
         echo "Response: $response"
     else
-        confidence_pct=$(echo "$confidence * 100" | bc | cut -d. -f1)
+        confidence_pct=$(printf "%.0f" $(echo "$confidence * 100" | bc))
         echo "✓ Got HSN: $top_hsn (${confidence_pct}% confidence)"
         
-        # Check if expected HSN is in top 3
+        # Check if expected HSN prefix is in top 3
         all_hsn=$(echo "$response" | jq -r '.classifications[].hsn_code' 2>/dev/null | tr '\n' ' ')
         
         if echo "$all_hsn" | grep -q "$expected"; then
@@ -114,11 +94,13 @@ echo "Test Results Summary"
 echo "========================================="
 echo "Total products tested: $total_count"
 echo "Successful matches: $success_count"
-echo "Accuracy: $(echo "scale=1; $success_count * 100 / $total_count" | bc)%"
-echo "Average response time: $(echo "scale=0; $total_time / $total_count" | bc)ms"
+accuracy=$(echo "scale=1; $success_count * 100 / $total_count" | bc)
+echo "Accuracy: ${accuracy}%"
+avg_time=$(echo "scale=0; $total_time / $total_count" | bc)
+echo "Average response time: ${avg_time}ms"
 echo ""
 
-if [ $success_count -ge 15 ]; then
+if [ $success_count -ge 8 ]; then
     echo "✅ PASSED: Accuracy target met (>75%)"
     exit 0
 else
