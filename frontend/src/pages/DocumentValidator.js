@@ -80,38 +80,29 @@ function DocumentValidator() {
     setResults(null);
 
     try {
-      // For demo: simulate document validation
-      // In production, this would upload to S3 and call the validation API
-      
-      setTimeout(() => {
-        // Mock validation results
-        const mockResults = {
-          document_type: 'invoice',
-          extracted_fields: {
-            exporter_name: 'ABC Exports Pvt Ltd',
-            iec_number: '0123456789',
-            hsn_code: '34011110',
-            invoice_number: 'INV-2024-001',
-            invoice_date: '2024-03-08',
-            invoice_value: '$5,000',
-            destination_country: 'United States',
-            product_description: 'Handmade Soap'
-          },
-          validation_results: {
-            status: 'valid',
-            issues: [],
-            recommendations: [
-              'All required fields are present',
-              'IEC number format is valid',
-              'HSN code format is valid',
-              'Document is ready for export'
-            ]
-          }
-        };
-        
-        setResults(mockResults);
-        setLoading(false);
-      }, 3000);
+      // Step 1: Get pre-signed URL
+      const uploadResponse = await axios.post(`${API_URL}/api/v1/upload-document`, {
+        file_name: file.name,
+        file_type: file.type
+      });
+
+      const { upload_url, s3_key, file_id } = uploadResponse.data;
+
+      // Step 2: Upload file to S3
+      await axios.put(upload_url, file, {
+        headers: {
+          'Content-Type': file.type
+        }
+      });
+
+      // Step 3: Trigger validation
+      const validationResponse = await axios.post(`${API_URL}/api/v1/validate-document`, {
+        s3_key: s3_key,
+        file_id: file_id
+      });
+
+      setResults(validationResponse.data);
+      setLoading(false);
       
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to validate document. Please try again.');

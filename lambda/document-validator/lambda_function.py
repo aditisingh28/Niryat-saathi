@@ -24,14 +24,11 @@ def lambda_handler(event, context):
     try:
         # Parse request
         body = json.loads(event.get('body', '{}'))
-        document_url = body.get('document_url', '')
-        document_type = body.get('document_type', 'invoice')
+        s3_key = body.get('s3_key', '')
+        file_id = body.get('file_id', '')
         
-        if not document_url:
-            return error_response(400, "document_url is required")
-        
-        # Extract S3 key from URL
-        s3_key = extract_s3_key(document_url)
+        if not s3_key:
+            return error_response(400, "s3_key is required")
         
         # Step 1: Extract text using Textract
         print(f"Extracting text from: {s3_key}")
@@ -42,11 +39,12 @@ def lambda_handler(event, context):
         
         # Step 2: Validate using AI
         print("Validating extracted data...")
-        validation_results = validate_with_ai(extracted_data, document_type)
+        validation_results = validate_with_ai(extracted_data, 'invoice')
         
         # Step 3: Format response
         return success_response({
-            'document_type': document_type,
+            'file_id': file_id,
+            'document_type': 'invoice',
             'extracted_fields': extracted_data,
             'validation_results': validation_results,
             'timestamp': datetime.now().isoformat()
